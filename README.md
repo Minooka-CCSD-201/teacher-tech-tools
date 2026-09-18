@@ -2,6 +2,7 @@
 
 ## Folder Structure
 
+<code>
 Main Page ___________ Min201 Local Apps
               |      |__ 50_States
               |      |__ qr-code-ruby
@@ -11,3 +12,4 @@ Main Page ___________ Min201 Local Apps
               |      |__ sound_player
               |
               |_________ External Resources Links
+</code>

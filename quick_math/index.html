@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algebra Homework Studio</title>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #1d2934;
+            --muted: #62717e;
+            --paper: #fffdf8;
+            --canvas: #e7f0ed;
+            --line: #d7e1dc;
+            --navy: #183a4a;
+            --teal: #167d72;
+            --teal-dark: #0e6259;
+            --coral: #df654e;
+            --pale-teal: #e0f1eb;
+            --warm: #fff2d8;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--ink);
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 36px 24px;
+            background-color: var(--canvas);
+            background-image: linear-gradient(rgba(24, 58, 74, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(24, 58, 74, 0.04) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .app-shell {
+            display: grid;
+            grid-template-columns: 310px minmax(0, 1fr);
+            gap: 22px;
+            align-items: start;
+        }
+        .dictionary, .container {
+            background: var(--paper);
+            border: 1px solid rgba(24, 58, 74, 0.12);
+            box-shadow: 0 16px 36px rgba(24, 58, 74, 0.12);
+        }
+        .dictionary {
+            position: sticky;
+            top: 24px;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+        .dictionary-header {
+            padding: 24px 22px 18px;
+            color: white;
+            background: var(--navy);
+        }
+        .eyebrow {
+            display: block;
+            margin-bottom: 6px;
+            color: #b9ddd6;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+        .dictionary h2, h1 { margin: 0; }
+        .dictionary h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 25px;
+            line-height: 1.05;
+        }
+        .dictionary-header p {
+            margin: 10px 0 0;
+            color: #d7e9e6;
+            font-size: 13px;
+            line-height: 1.45;
+        }
+        .dictionary-body { padding: 16px; }
+        .search-wrap { position: relative; }
+        .search-icon {
+            position: absolute;
+            top: 10px;
+            left: 11px;
+            color: var(--muted);
+            font-size: 16px;
+            pointer-events: none;
+        }
+        #function-search {
+            width: 100%;
+            padding: 10px 10px 10px 32px;
+            border: 1px solid var(--line);
+            border-radius: 5px;
+            color: var(--ink);
+            background: white;
+            font: 14px 'DM Sans', sans-serif;
+        }
+        #function-search:focus, textarea:focus {
+            outline: 3px solid rgba(22, 125, 114, 0.18);
+            border-color: var(--teal);
+        }
+        .function-list {
+            display: grid;
+            gap: 8px;
+            max-height: calc(100vh - 258px);
+            margin-top: 14px;
+            overflow-y: auto;
+            padding-right: 3px;
+        }
+        .function-card {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--line);
+            border-radius: 5px;
+            color: var(--ink);
+            text-align: left;
+            background: white;
+            cursor: pointer;
+            transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+        }
+        .function-card:hover, .function-card:focus-visible {
+            border-color: var(--teal);
+            box-shadow: 0 5px 12px rgba(22, 125, 114, 0.12);
+            transform: translateY(-1px);
+            background: var(--pale-teal);
+            outline: none;
+        }
+        .function-card[hidden] { display: none; }
+        .function-name {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .function-syntax {
+            display: block;
+            margin: 5px 0;
+            color: var(--teal-dark);
+            font: 13px 'DM Mono', monospace;
+        }
+        .function-description {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.35;
+        }
+        .no-results {
+            display: none;
+            margin: 16px 4px 4px;
+            color: var(--muted);
+            font-size: 13px;
+            text-align: center;
+        }
+        .container { padding: 34px; border-radius: 8px; }
+        .title-row {
+            display: flex;
+            gap: 20px;
+            align-items: end;
+            justify-content: space-between;
+            margin-bottom: 26px;
+        }
+        h1 {
+            color: var(--navy);
+            font-family: 'Fraunces', serif;
+            font-size: clamp(32px, 5vw, 46px);
+            line-height: 1;
+        }
+        .subtitle {
+            max-width: 275px;
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.45;
+        }
+        textarea {
+            width: 100%;
+            height: 185px;
+            resize: vertical;
+            padding: 15px;
+            margin: 9px 0 14px;
+            border: 1px solid var(--line);
+            border-radius: 5px;
+            color: var(--ink);
+            font: 14px/1.55 'DM Mono', monospace;
+            background: #fff;
+        }
+        button {
+            padding: 11px 16px;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            color: white;
+            font: 600 14px 'DM Sans', sans-serif;
+            background-color: var(--teal);
+            cursor: pointer;
+            transition: background-color 160ms ease, transform 160ms ease;
+        }
+        button:hover {
+            background-color: var(--teal-dark);
+            transform: translateY(-1px);
+        }
+        .clear-btn {
+            color: var(--coral);
+            border-color: #f0b7aa;
+            background-color: #fff7f4;
+        }
+        .clear-btn:hover {
+            color: white;
+            border-color: var(--coral);
+            background-color: var(--coral);
+        }
+        .secondary-btn { color: var(--navy); border-color: #b9cbc9; background: white; }
+        .secondary-btn:hover { color: white; border-color: var(--navy); background: var(--navy); }
+        .actions { display: flex; flex-wrap: wrap; gap: 9px; }
+        #output {
+            margin-top: 27px;
+            padding: 22px;
+            border: 1px dashed #aac5bd;
+            border-radius: 5px;
+            background-color: #fbfdfb;
+            min-height: 100px;
+            font-size: 18px;
+            line-height: 2;
+        }
+        .examples {
+            padding: 15px 17px;
+            border-left: 4px solid #e6ad43;
+            border-radius: 0 5px 5px 0;
+            background-color: var(--warm);
+            margin-bottom: 22px;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+        .examples code {
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: var(--navy);
+            background-color: rgba(255, 255, 255, 0.65);
+            font-family: 'DM Mono', monospace;
+        }
+        label { font-size: 14px; }
+        @media (max-width: 780px) {
+            body { padding: 16px; }
+            .app-shell { grid-template-columns: 1fr; }
+            .dictionary { position: static; }
+            .function-list { max-height: 260px; }
+            .container { padding: 24px 20px; }
+            .title-row { align-items: start; flex-direction: column; gap: 10px; }
+            .subtitle { max-width: none; }
+        }
+        @media print {
+            body { padding: 0; background: white; }
+            .dictionary, .examples, label, textarea, .actions, .subtitle { display: none; }
+            .app-shell { display: block; }
+            .container { padding: 0; border: 0; box-shadow: none; }
+            #output { margin-top: 20px; border: 0; }
+        }
+    </style>
+</head>
+<body>
+    <main class="app-shell">
+        <aside class="dictionary" aria-labelledby="dictionary-title">
+            <div class="dictionary-header">
+                <span class="eyebrow">Math reference</span>
+                <h2 id="dictionary-title">Function Dictionary</h2>
+                <p>Search a function, then select it to add a ready-to-use example.</p>
+            </div>
+            <div class="dictionary-body">
+                <div class="search-wrap">
+                    <span class="search-icon" aria-hidden="true">&#8981;</span>
+                    <input id="function-search" type="search" placeholder="Search functions" aria-label="Search math functions">
+                </div>
+                <div class="function-list" id="function-list">
+                    <button class="function-card" type="button" data-insert="\\frac{numerator}{denominator}" data-search="fraction divide quotient rational">
+                        <span class="function-name">Fraction</span><code class="function-syntax">\frac{a}{b}</code><span class="function-description">Build a numerator over a denominator.</span>
+                    </button>
+                    <button class="function-card" type="button" data-insert="\\sqrt{value}" data-search="square root radical nth root">
+                        <span class="function-name">Square root</span><code class="function-syntax">\sqrt{x}</code><span class="function-description">Write the principal square root.</span>
+                    </button>
+                    <button class="function-card" type="button" data-insert="x^{exponent}" data-search="exponent power superscript squared cubed">
+                        <span class="function-name">Exponent</span><code class="function-syntax">x^{n}</code><span class="function-description">Raise a value or expression to a power.</span>
+                    </button>
+                    <button class="function-card" type="button" data-insert="\\left|x\\right|" data-search="absolute value modulus distance">
+                        <span class="function-name">Absolute value</span><code class="function-syntax">\left|x\right|</code><span class="function-description">Show distance from zero.</span>
+                    </button>
+                    <button class="function-card" type="button" data-insert="f(x) = mx + b" data-search="linear slope intercept function">
+                        <span class="function-name">Linear function</span><code class="function-syntax">f(x) = mx + b</code><span class="function-description">Use slope-intercept form for a line.</span>
+                    </button>
+                    <button class="function-card" type="button" data-insert="f(x) = ax^2 + bx + c" data-search="quadratic parabola polynomial">
+                        <span class="function-name">Quadratic function</span><code class="function-syntax">f(x) = ax^2 + bx + c</code><span class="function-description">Use standard form for a parabola.</span>
+                    </button>
+                    <button class="function-card" type="button" data-insert="\\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}" data-search="quadratic formula roots solve">
+                        <span class="function-name">Quadratic formula</span><code class="function-syntax">\frac{-b \pm \sqrt{b^2-4ac}}{2a}</code><span class="function-description">Find roots of $ax^2 + bx + c = 0$.</span>
+                    </button>
+                    <button class="function-card" type="button" data-insert="\\sin(\\theta), \\cos(\\theta), \\tan(\\theta)" data-search="trigonometry trig sine cosine tangent">
+                        <span class="function-name">Trigonometry</span><code class="function-syntax">\sin(θ), \cos(θ), \tan(θ)</code><span class="function-description">Use the core trigonometric functions.</span>
+                    </button>
+                    <button class="function-card" type="button" data-insert="\\log_{base}(value)" data-search="log logarithm exponential base">
+                        <span class="function-name">Logarithm</span><code class="function-syntax">\log_b(x)</code><span class="function-description">Find the exponent that produces a value.</span>
+                    </button>
+                    <button class="function-card" type="button" data-insert="\\sum_{i=1}^{n} i" data-search="summation sigma series sequence">
+                        <span class="function-name">Summation</span><code class="function-syntax">\sum_{i=1}^{n}</code><span class="function-description">Add terms across an indexed range.</span>
+                    </button>
+                </div>
+                <p class="no-results" id="no-results">No matching functions found.</p>
+            </div>
+        </aside>
+
+        <section class="container">
+        <div class="title-row">
+            <div><span class="eyebrow" style="color: var(--teal);">Worksheet builder</span><h1>Algebra Homework</h1></div>
+            <p class="subtitle">Compose problems, render clean notation, and print a polished worksheet.</p>
+        </div>
+        
+        <div class="examples">
+            <strong>Quick Examples:</strong><br>
+            Fractions: <code>\frac{3}{4}</code> →  renders as $$\frac{3}{4}$$<br>
+            Exponents: <code>x^2 + 5x - 3</code> → $$x^2 + 5x - 3$$<br>
+            Square root: <code>\sqrt{25}</code> → $$\sqrt{25}$$<br>
+            Equations: <code>y = 2x + 7</code> → $$y = 2x + 7$$
+        </div>
+
+        <label for="input"><strong>Enter your problems (one per line, use \\ for math notation):</strong></label>
+        <textarea id="input" placeholder="Example:
+1. Solve for x: 2x + 5 = 15
+2. Simplify: \frac{6x^2}{3x}
+3. Factor: x^2 - 9
+4. Evaluate when x=3: 4x^2 - 2x + 1"></textarea>
+        
+        <div class="actions">
+            <button onclick="renderHomework()">Generate Homework</button>
+            <button class="clear-btn" onclick="clearAll()">Clear</button>
+            <button class="secondary-btn" onclick="printHomework()">Print / Save PDF</button>
+        </div>
+        
+        <div id="output"></div>
+        </section>
+    </main>
+
+    <script>
+        function renderHomework() {
+            const input = document.getElementById('input').value;
+            const output = document.getElementById('output');
+            
+            if (input.trim() === '') {
+                output.innerHTML = '<em>Please enter some problems above.</em>';
+                return;
+            }
+            
+            // Split by lines and wrap each in proper delimiters
+            const lines = input.split('\n').filter(line => line.trim() !== '');
+            const formatted = lines.map(line => {
+                // Wrap the entire line in math delimiters if it contains math
+                return line;
+            }).join('<br><br>');
+            
+            output.innerHTML = '\\[' + formatted.replace(/<br><br>/g, '\\]<br><br>\\[') + '\\]';
+            
+            // Tell MathJax to re-render
+            MathJax.typesetPromise([output]).catch((err) => console.log(err));
+        }
+        
+        function clearAll() {
+            document.getElementById('input').value = '';
+            document.getElementById('output').innerHTML = '';
+        }
+
+        function insertFunction(syntax) {
+            const input = document.getElementById('input');
+            const start = input.selectionStart;
+            const end = input.selectionEnd;
+            const needsNewline = input.value && start > 0 && input.value[start - 1] !== '\n';
+            const insertion = (needsNewline ? '\n' : '') + syntax;
+            input.setRangeText(insertion, start, end, 'end');
+            input.focus();
+        }
+
+        document.querySelectorAll('.function-card').forEach(card => {
+            card.addEventListener('click', () => insertFunction(card.dataset.insert));
+        });
+
+        document.getElementById('function-search').addEventListener('input', event => {
+            const query = event.target.value.trim().toLowerCase();
+            const cards = document.querySelectorAll('.function-card');
+            let matches = 0;
+
+            cards.forEach(card => {
+                const match = card.textContent.toLowerCase().includes(query) || card.dataset.search.includes(query);
+                card.hidden = !match;
+                if (match) matches++;
+            });
+
+            document.getElementById('no-results').style.display = matches ? 'none' : 'block';
+        });
+        
+        function printHomework() {
+            window.print();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Create and download a QR code from any URL." />
+    <title>QR Code Generator</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow">A small, useful tool</p>
+        <h1 id="page-title">Turn a link into a QR code.</h1>
+        <p class="lede">Paste a URL, generate its code, and download it as a PNG.</p>
+      </section>
+
+      <section class="generator" aria-label="QR code generator">
+        <form id="qr-form">
+          <label for="url-input">Your URL</label>
+          <div class="input-row">
+            <input
+              id="url-input"
+              name="url"
+              type="url"
+              placeholder="https://example.com"
+              autocomplete="url"
+              required
+            />
+            <button type="submit">Generate</button>
+          </div>
+          <p id="form-message" class="form-message" role="status"></p>
+        </form>
+
+        <div class="result" aria-live="polite">
+          <div id="qr-code" class="qr-frame">
+            <p class="empty-state">Your QR code will appear here.</p>
+          </div>
+          <div class="result-actions">
+            <button id="download-button" class="secondary-button" type="button" disabled>
+              Download PNG
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <footer>Made with Ruby originally, now ready for the web.</footer>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

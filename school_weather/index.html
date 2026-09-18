@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🌤️ Junior High Weather Station</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header>
+  <h1> <button id="logo-btn" onclick="toggleSearch()" title="Search for a location">🌤️ Weather Station</button> <span id="location-display">Detecting location…</span></h1>
+  <div id="info-banner" style="font-family: 'Courier New', Courier, monospace;">
+    🌪️ Learn about tornadoes! Visit:
+    <a href="https://www.weather.gov/safety/tornado" target="_blank" rel="noopener">
+      weather.gov/safety/tornado
+    </a>
+  </div>
+  <div id="last-updated">Loading…</div>
+  <div id="search-wrap">
+    <form id="search-form" onsubmit="return doLocationSearch(event)">
+      <input id="search-input" type="text" placeholder="Search city, state or ZIP…" autocomplete="off" spellcheck="false" />
+      <button type="submit" id="search-submit-btn">🔍 Search</button>
+    </form>
+  </div>
+    
+    <span id="search-status"></span>
+</header>
+
+
+<main>
+
+  <!-- ══════════ RADAR ══════════ -->
+  <div class="radar-panel">
+    <div id="tornado-banner">🌪️ Tornado Warning — Stay inside, away from windows!</div>
+    <div class="panel-title">📡 NOAA Live Radar <span id="radar-loading-msg" style="font-weight:400; color:var(--text-muted); margin-left:8px;">Loading frames…</span></div>
+    <div id="radar-map"></div>
+    <div class="radar-controls">
+      <button class="radar-btn" id="radar-play-btn" title="Play / Pause" onclick="toggleAnimation()">⏸</button>
+      <input class="radar-scrubber" id="radar-scrubber" type="range" min="0" value="0" step="1" oninput="scrubFrame(this.value)" />
+      <span id="radar-timestamp">--:--</span>
+    </div>
+    <div class="radar-legend">
+      <span><span class="dot" style="background:#00ffff"></span>Light</span>
+      <span><span class="dot" style="background:#00ff00"></span>Moderate</span>
+      <span><span class="dot" style="background:#ffff00"></span>Heavy</span>
+      <span><span class="dot" style="background:#ff8800"></span>Very Heavy</span>
+      <span><span class="dot" style="background:#ff0000"></span>Extreme</span>
+      <span style="margin-left:auto; color:#5bc8af; font-family: 'Courier New', Courier, monospace;">| © 2026 - Present Anna Villarreal | Powered by NOAA/NWS |</span>
+    </div>
+  </div>
+
+  <!-- ══════════ INFO COLUMN ══════════ -->
+  <div class="info-column">
+
+    <!-- YouTube Live (shown only when Ryan Hall Y'all is live) -->
+    <div id="live-panel" class="info-panel" style="display:none">
+      <div class="panel-title" id="live-panel-title">📺 Ryan Hall Y'all — Live Now</div>
+      <div class="info-panel-body" id="live-panel-body"></div>
+    </div>
+
+    <!-- Air Quality + Current Conditions (side by side) -->
+    <div class="panel-row">
+
+      <div class="info-panel">
+        <div class="panel-title" id="aqi-panel-title">🌬️ Air Quality Index (AQI)</div>
+        <div class="info-panel-body" id="aqi-body">
+          <div class="loading"><div class="spinner"></div>Fetching air quality…</div>
+        </div>
+      </div>
+
+      <div class="info-panel">
+        <div class="panel-title">🌡️ Current Conditions</div>
+        <div class="info-panel-body" id="conditions-body">
+          <div class="loading"><div class="spinner"></div>Fetching conditions…</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Alerts (hidden when no active alerts) -->
+    <div class="info-panel" id="alerts-panel" style="display:none">
+      <div class="panel-title">⚠️ Hazards &amp; Alerts</div>
+      <div class="info-panel-body" id="alerts-body">
+        <div class="loading"><div class="spinner"></div>Fetching alerts…</div>
+      </div>
+    </div>
+
+    <!-- Forecast -->
+    <div class="info-panel">
+      <div class="panel-title">📅 7-Day Forecast</div>
+      <div class="info-panel-body" id="forecast-body">
+        <div class="loading"><div class="spinner"></div>Fetching forecast…</div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="app.js"></script>
+</body>
+</html>
